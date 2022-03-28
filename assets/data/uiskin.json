@@ -1,0 +1,42 @@
+{
+"BitmapFont": {
+	"PilotCommand-3zn93": {
+		"file": "PilotCommand-3zn93.fnt"
+	}
+},
+"Color": {
+	"Black": {
+		"r": 0,
+		"g": 0,
+		"b": 0,
+		"a": 1
+	},
+	"Paper": {
+		"r": 0.9766667,
+		"g": 0.9041394,
+		"b": 0.7194778,
+		"a": 1
+	}
+},
+"TintedDrawable": {
+	"Paper_drawable": {
+		"name": "white-pixel",
+		"color": "Paper",
+		"minWidth": 100,
+		"minHeight": 100
+	}
+},
+"ButtonStyle": {
+	"default": {
+		"up": "Paper_drawable"
+	}
+},
+"TextButtonStyle": {
+	"default": {
+		"font": "PilotCommand-3zn93",
+		"up": "test",
+		"down": "Paper_drawable",
+		"over": "Paper_drawable"
+	}
+}
+}

@@ -1,0 +1,31 @@
+{
+Color: {
+	PaperColor: {
+		r: 0.9098039
+		g: 0.8627451
+		b: 0.72156864
+		a: 1
+	}
+}
+TintedDrawable: {
+	PaperColorBackground: {
+		name: white-pixel
+		color: PaperColor
+		minWidth: 100
+		minHeight: 50
+	}
+}
+ButtonStyle: {
+	default: {
+		up: PaperColorBackground
+		down: PaperColorBackground
+		over: PaperColorBackground
+		focused: PaperColorBackground
+		disabled: PaperColorBackground
+		checked: PaperColorBackground
+		checkedOver: PaperColorBackground
+		checkedDown: PaperColorBackground
+		checkedFocused: PaperColorBackground
+	}
+}
+}
