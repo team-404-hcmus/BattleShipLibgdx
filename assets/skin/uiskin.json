@@ -1,0 +1,10 @@
+{
+"TextButtonStyle": {
+	"default": {
+		"font": "font",
+		"up": "button",
+		"down": "button",
+		"over": "button"
+	}
+}
+}
