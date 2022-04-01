@@ -7,26 +7,27 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class battleship extends Game {
-	SpriteBatch batch;
-	Texture img;
-	
+	AppAsset appAsset;
+
 	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+	public void create() {
+		appAsset = AppAsset.getInstance();
 	}
 
 	@Override
-	public void render () {
-		ScreenUtils.clear(1, 0, 0, 1);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		batch.end();
+	public void dispose() {
+		super.dispose();
+		appAsset.DisposeAll();
 	}
-	
+
 	@Override
-	public void dispose () {
-		batch.dispose();
-		img.dispose();
+	public void render() {
+		super.render();
+		if(appAsset.load())
+		{
+			setScreen(new HomeScreen(this));
+		}
+
 	}
+
 }
