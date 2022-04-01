@@ -12,7 +12,6 @@ public abstract class BaseScreen implements Screen {
     {
         asset = AppAsset.getInstance();
         m_battleship = bs;
-
     }
 
 }
