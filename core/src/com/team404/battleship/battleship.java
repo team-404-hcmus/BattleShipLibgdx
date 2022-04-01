@@ -2,16 +2,24 @@ package com.team404.battleship;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class battleship extends Game {
 	AppAsset appAsset;
+	public JavaAndroidBrigde m_brigde;
+	battleship(JavaAndroidBrigde brigde)
+	{
+		m_brigde = brigde;
+
+	}
 
 	@Override
 	public void create() {
 		appAsset = AppAsset.getInstance();
+		setScreen(new LoadingScreen());
 	}
 
 	@Override
@@ -23,11 +31,13 @@ public class battleship extends Game {
 	@Override
 	public void render() {
 		super.render();
-		if(appAsset.load())
-		{
-			setScreen(new HomeScreen(this));
-		}
-
 	}
-
+//	private Screen currentScreen;
+//	@Override
+//	public void setScreen(Screen screen) {
+//		if(screen == currentScreen) return;
+//		currentScreen = screen;
+//		super.setScreen(screen);
+//
+//	}
 }
