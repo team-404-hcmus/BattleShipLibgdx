@@ -1697,6 +1697,10 @@ preferences: {
 		class: java.lang.Integer
 		value: 499940946
 	}
+	last-import-export-path: {
+		class: java.lang.String
+		value: D:/repos/BattleShipLibgdx/assets/skin/uiskin.json
+	}
 	resources-relative: {
 		class: java.lang.Boolean
 		value: false
