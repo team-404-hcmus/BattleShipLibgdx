@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.graphics.Texture;
 
 public class AppAsset {
     private static AppAsset App_Asset = null;
@@ -21,6 +22,7 @@ public class AppAsset {
 
         /* Load the skin as usual */
         m_AssetManager.load("skin/uiskin.json", Skin.class, parameter);
+        m_AssetManager.load("background.png",Texture.class);
     }
 
     static public AppAsset getInstance()
@@ -37,9 +39,9 @@ public class AppAsset {
     }
 
     private void GenerateFont(){
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/PilotCommand-3zn93.otf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Lobster_1.3.otf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 34;
+        parameter.size = 100;
         font = generator.generateFont(parameter);
         generator.dispose();
     }
@@ -48,5 +50,8 @@ public class AppAsset {
     }
     public Skin getSkin(){
         return m_AssetManager.get("skin/uiskin.json",Skin.class);
+    }
+    public Texture getBackground(){
+        return m_AssetManager.get("background.png");
     }
 }

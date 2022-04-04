@@ -6,12 +6,9 @@ import com.badlogic.gdx.Screen;
 
 public abstract class BaseScreen implements Screen {
     protected AppAsset asset;
-    protected battleship m_battleship;
-
-    BaseScreen(battleship bs)
+    BaseScreen()
     {
         asset = AppAsset.getInstance();
-        m_battleship = bs;
     }
 
 }

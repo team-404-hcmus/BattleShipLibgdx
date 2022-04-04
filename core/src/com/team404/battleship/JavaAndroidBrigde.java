@@ -1,5 +1,6 @@
 package com.team404.battleship;
 
-public class JavaAndroidBrigde {
+public interface JavaAndroidBrigde {
+    void Log(String log);
 
 }
