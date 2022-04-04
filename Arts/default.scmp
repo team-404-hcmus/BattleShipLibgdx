@@ -21,11 +21,60 @@ atlasData: {
 			type: NINE_PATCH
 			hidden: false
 		}
+		{
+			file: D:/repos/BattleShipLibgdx/Arts/buttonv2_up.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: buttonv2_up
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: D:/repos/BattleShipLibgdx/Arts/buttonv2_down.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: buttonv2_down
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: NINE_PATCH
+			hidden: false
+		}
 	]
 	fontDrawables: []
 }
 jsonData: {
-	colors: []
+	colors: [
+		{
+			class: com.ray3k.skincomposer.data.ColorData
+			color: {
+				r: 0
+				g: 0
+				b: 0
+				a: 1
+			}
+			name: RGBA_0_0_0_255
+		}
+	]
 	fonts: []
 	freeTypeFonts: [
 		{
@@ -1549,19 +1598,19 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: up
 						optional: true
-						value: button
+						value: buttonv2_up
 					}
 					down: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: down
 						optional: true
-						value: button
+						value: buttonv2_down
 					}
 					over: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: over
 						optional: true
-						value: button
+						value: buttonv2_up
 					}
 					focused: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
