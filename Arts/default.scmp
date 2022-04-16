@@ -3,25 +3,6 @@ atlasData: {
 	atlasCurrent: true
 	drawables: [
 		{
-			file: D:/repos/BattleShipLibgdx/Arts/button.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: button
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
 			file: D:/repos/BattleShipLibgdx/Arts/buttonv2_up.9.png
 			bgColor: {
 				r: 1
@@ -57,6 +38,25 @@ atlasData: {
 			customized: false
 			tenPatchData: null
 			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: D:/repos/BattleShipLibgdx/Arts/cell.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: cell
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			type: TEXTURE
 			hidden: false
 		}
 	]
@@ -976,19 +976,19 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: up
 						optional: true
-						value: null
+						value: cell
 					}
 					down: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: down
 						optional: true
-						value: null
+						value: cell
 					}
 					over: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: over
 						optional: true
-						value: null
+						value: cell
 					}
 					focused: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable

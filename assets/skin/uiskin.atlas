@@ -1,15 +1,31 @@
 
 uiskin.png
-size: 256, 256
+size: 512, 512
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
-button
+buttonv2_down
   rotate: false
-  xy: 1, 69
-  size: 160, 90
-  split: 6, 3, 4, 6
-  pad: 13, 14, 11, 13
-  orig: 160, 90
+  xy: 1, 99
+  size: 300, 200
+  split: 150, 149, 100, 99
+  pad: 62, 27, 28, 58
+  orig: 300, 200
+  offset: 0, 0
+  index: -1
+buttonv2_up
+  rotate: false
+  xy: 1, 301
+  size: 300, 200
+  split: 97, 73, 44, 77
+  pad: 62, 20, 24, 58
+  orig: 300, 200
+  offset: 0, 0
+  index: -1
+cell
+  rotate: false
+  xy: 303, 301
+  size: 200, 200
+  orig: 200, 200
   offset: 0, 0
   index: -1
