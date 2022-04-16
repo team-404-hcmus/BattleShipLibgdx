@@ -27,7 +27,13 @@ public class HomeScreen extends BaseScreen {
     private Table menuTable;
     private SpriteBatch batch;
     private Texture img;
+    private HomeScreenPayLoad hsData;
+
     public HomeScreen(){
+
+    }
+    @Override
+    public void show() {
         batch = new SpriteBatch();
         asset.getSkin();
         stage = new Stage(new ScreenViewport());
@@ -46,7 +52,7 @@ public class HomeScreen extends BaseScreen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                ((battleship)Gdx.app.getApplicationListener()).setScreen(new GameSetting());
+                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen(new GameSetting()));
                 super.touchUp(event, x, y, pointer, button);
             }
         });
@@ -56,60 +62,22 @@ public class HomeScreen extends BaseScreen {
         Settingbtn = new TextButton("Setting",asset.getSkin());
         menuTable = new Table();
 
-        menuTable.add(SinglePlayer).padBottom(padding);
+        menuTable.add(SinglePlayer).padBottom(padding).size(800,200);
         menuTable.row();
-        menuTable.add(Multiplayer).padBottom(padding);
+        menuTable.add(Multiplayer).padBottom(padding).size(800,200);
         menuTable.row();
-        menuTable.add(Settingbtn).padBottom(padding);
+        menuTable.add(Settingbtn).padBottom(padding).size(800,200);
         menuTable.setX(Gdx.graphics.getWidth()/2f);
-        menuTable.setY(Gdx.graphics.getHeight()/4f);
+        menuTable.setY(Gdx.graphics.getHeight()/3.5f);
 
 
         menuTable.debug();
         Ship k = new Ship(asset.getShip5txt(), 0,0);
 
-        DragAndDrop dnd = new DragAndDrop();
-        dnd.setDragActorPosition(k.getWidth(),0);
-        dnd.addSource(new DragAndDrop.Source(k) {
-            @Override
-            public DragAndDrop.Payload dragStart(InputEvent event, float x, float y, int pointer) {
-                DragAndDrop.Payload payload = new DragAndDrop.Payload();
-                payload.setObject("Some payload!");
-
-                payload.setDragActor(getActor());
-
-
-
-                return payload;
-            }
-        });
-        dnd.setDragActorPosition(k.getWidth()/2,-k.getHeight()/2);
-        dnd.addTarget(new DragAndDrop.Target(menuTable){
-            @Override
-            public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                return true;
-            }
-
-            @Override
-            public void drop(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
-                Actor at = payload.getDragActor();
-                Actor thisActor = getActor();
-
-
-                Vector2 pos = new Vector2(thisActor.getWidth(),thisActor.getHeight()/2);
-                thisActor.localToStageCoordinates(pos);
-                at.setPosition(pos.x,pos.y);
-            }
-        });
         stage.addActor(menuTable);
-        stage.addActor(k);
         img = asset.getBackground();
         Gdx.input.setInputProcessor(stage);
         ((battleship)Gdx.app.getApplicationListener()).m_brigde.Log("loading Screen");
-    }
-    @Override
-    public void show() {
-
     }
 
     @Override
@@ -141,12 +109,27 @@ public class HomeScreen extends BaseScreen {
 
     @Override
     public void hide() {
-
+        stage.dispose();
+        batch.dispose();
     }
 
     @Override
     public void dispose() {
-        stage.dispose();
-        batch.dispose();
+
+    }
+
+    @Override
+    void createData() {
+        hsData = new HomeScreenPayLoad();
+        this.data = hsData;
+    }
+
+    public class HomeScreenPayLoad implements ILoadable{
+
+        @Override
+        public boolean load() {
+            return true;
+
+        }
     }
 }

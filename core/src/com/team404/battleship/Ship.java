@@ -16,7 +16,7 @@ import org.w3c.dom.Text;
 
 
 public class Ship extends Actor {
-    private Texture texture;
+    private final Texture texture;
     private float MouseX = 0f;
     private float MouseY = 0f;
     private  int shipSize;
@@ -24,12 +24,13 @@ public class Ship extends Actor {
     private final float totalSize;
     boolean isDrag = false;
 
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
         batch.draw(this.texture,
                 getX(),
-                getY());
+                getY(),totalSize,cellSize);
     }
 
 
@@ -38,7 +39,7 @@ public class Ship extends Actor {
         this.shipSize = shipSize;
         this.cellSize = cellSize;
         this.totalSize = cellSize*shipSize;
-        setBounds(0, 0, texture.getWidth(), texture.getHeight());
+        setBounds(0, 0, totalSize, cellSize);
     }
 
     @Override

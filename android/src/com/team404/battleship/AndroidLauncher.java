@@ -14,6 +14,7 @@ public class AndroidLauncher extends AndroidApplication implements JavaAndroidBr
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		initialize(new battleship(this), config);
 
+
 	}
 
 	@Override

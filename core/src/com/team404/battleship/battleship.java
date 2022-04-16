@@ -18,8 +18,8 @@ public class battleship extends Game {
 
 	@Override
 	public void create() {
-		appAsset = AppAsset.getInstance();
-		setScreen(new LoadingScreen());
+//		appAsset = AppAsset.getInstance();
+		setScreen(new LoadingScreen(new HomeScreen()));
 	}
 
 	@Override
