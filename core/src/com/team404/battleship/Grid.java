@@ -1,0 +1,93 @@
+package com.team404.battleship;
+
+
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.ReflectionPool;
+
+import java.util.ArrayList;
+
+public class Grid extends Table {
+    private final float cellSize;
+    protected final int rows;
+    protected final int cols;
+    protected ArrayList<Ship> m_Ships;
+    public Grid(float CellSize, Skin skin, int rowCount, int colCount, Class<? extends InputListener> T){
+        m_Ships = new ArrayList<>();
+        this.cellSize = CellSize;
+        this.rows = rowCount;
+        this.cols = colCount;
+        for(int y= 0; y < colCount; ++y)
+        {
+            for (int x =0 ; x < rowCount; ++x)
+            {
+                ImageButton img = new ImageButton(skin);
+                add(img).size(CellSize);
+            }
+            row();
+        }
+    }
+
+    public void initListener(){
+        layout();
+    }
+
+    @Override
+    public void draw(Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+    }
+
+
+    void gridSnap(Ship ship,float x,float y)
+    {
+        Vector2 relativePos = stageToLocalCoordinates(new Vector2(x,y));
+
+        final float cellWidth = ship.getWidth()/cellSize;
+        final float cellHeight = ship.getHeight()/cellSize;
+        relativePos.x += cellSize*(rows/2);
+        relativePos.y += cellSize*(cols/2);
+        relativePos.x /=cellSize;
+        relativePos.y /=cellSize;
+
+        relativePos.x = Math.max(Math.min(Math.round(relativePos.x),10f-cellWidth),0f)  - rows/2 ;
+        relativePos.y = Math.max(Math.min(Math.round(relativePos.y),10f-cellHeight),0f)  - cols/2;
+        relativePos.scl(cellSize);
+        Vector2 pos = localToStageCoordinates(relativePos);
+        ship.setPosition(pos.x,pos.y);
+    }
+    void gridSnap(Ship ship,float x,float y,boolean addShip)
+    {
+        gridSnap(ship,x,y);
+        if(addShip)
+        {
+            this.addShip(ship);
+        }
+    }
+
+    public boolean isSnappable(Ship ship){
+        Rectangle bound = ship.getBounds();
+        for(Ship _ship : m_Ships)
+        {
+            if(_ship != ship && _ship.getBounds().overlaps(bound))
+            {
+                return false;
+            }
+        }
+        return true;
+
+    }
+
+    public void addShip(Ship ship){
+        m_Ships.add(ship);
+
+    }
+
+    public ArrayList<Ship> getShipsList(){
+        return m_Ships;
+    }
+}

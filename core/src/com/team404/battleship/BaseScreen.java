@@ -6,9 +6,8 @@ import com.badlogic.gdx.Screen;
 
 public abstract class BaseScreen implements Screen, ILoadable {
     protected AppAsset asset;
-
     ILoadable data;
-    BaseScreen()
+    BaseScreen(RedirectingPayload redirectingPayload)
     {
         asset = AppAsset.getInstance();
     }

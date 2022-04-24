@@ -1,0 +1,13 @@
+
+sdf.png
+size: 512, 512
+format: RGBA8888
+filter: Linear, Linear
+repeat: none
+minesweeper2
+  rotate: false
+  xy: 1, 219
+  size: 390, 170
+  orig: 390, 170
+  offset: 0, 0
+  index: -1

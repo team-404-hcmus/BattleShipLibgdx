@@ -41,7 +41,7 @@ public class Rumble extends SequenceAction {
         ogX = target.getX();
         ogY = target.getY();
         moveBack.setPosition(ogX,ogY);
-        moveBack.setDuration(.2f);
+        moveBack.setDuration(.1f);
         shake.setDuration(0.05f);
         shake.setAmount(5,0);
 

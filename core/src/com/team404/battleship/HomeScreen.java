@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -13,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 
@@ -30,6 +27,7 @@ public class HomeScreen extends BaseScreen {
     private HomeScreenPayLoad hsData;
 
     public HomeScreen(){
+        super(null);
 
     }
     @Override
@@ -52,7 +50,7 @@ public class HomeScreen extends BaseScreen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen(new GameSetting()));
+                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen(new PlanningScreen()));
                 super.touchUp(event, x, y, pointer, button);
             }
         });
@@ -62,17 +60,16 @@ public class HomeScreen extends BaseScreen {
         Settingbtn = new TextButton("Setting",asset.getSkin());
         menuTable = new Table();
 
-        menuTable.add(SinglePlayer).padBottom(padding).size(800,200);
+        menuTable.add(SinglePlayer).padBottom(padding).size(500,200);
         menuTable.row();
-        menuTable.add(Multiplayer).padBottom(padding).size(800,200);
+        menuTable.add(Multiplayer).padBottom(padding).size(500,200);
         menuTable.row();
-        menuTable.add(Settingbtn).padBottom(padding).size(800,200);
+        menuTable.add(Settingbtn).padBottom(padding).size(500,200);
         menuTable.setX(Gdx.graphics.getWidth()/2f);
         menuTable.setY(Gdx.graphics.getHeight()/3.5f);
 
 
         menuTable.debug();
-        Ship k = new Ship(asset.getShip5txt(), 0,0);
 
         stage.addActor(menuTable);
         img = asset.getBackground();
