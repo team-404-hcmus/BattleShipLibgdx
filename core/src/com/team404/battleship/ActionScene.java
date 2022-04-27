@@ -58,41 +58,7 @@ public class ActionScene extends BaseScreen{
 
     @Override
     public void show() {
-        stage = new Stage();
-        batch = new SpriteBatch();
-        grid = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class ){
-            @Override
-            public void initListener() {
-                layout();
-                SnapshotArray<Actor> cells = getChildren();
-
-                for(int i = 0; i < cells.size;i++)
-                {
-                    final Actor act = cells.get(i);
-                    act.addListener(new ClickListener(){
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
-                            stage.addAction(action.obtain());
-                        }
-                    });
-                }
-            }
-        };
-        grid.initListener();
-        grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
-        stage.addActor(grid);
-        for(ShipData d : shipList)
-        {
-            Ship k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,d.size,false);
-            if(d.Orientation){
-                k.toggleOrientation();
-            }
-            k.setPosition(d.x,d.y);
-            stage.addActor(k);
-        }
-
-        Gdx.input.setInputProcessor(stage);
+        
     }
 
     @Override
