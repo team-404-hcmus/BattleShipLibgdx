@@ -24,6 +24,7 @@ public class AppAsset {
         /* Load the skin as usual */
         m_AssetManager.load("skin/uiskin.json", Skin.class, parameter);
         m_AssetManager.load("background.png",Texture.class);
+        m_AssetManager.finishLoading();
     }
 
     static public AppAsset getInstance()
@@ -56,5 +57,6 @@ public class AppAsset {
     public Texture getBackground(){
         return m_AssetManager.get("background.png");
     }
+    public boolean isFinish(){return m_AssetManager.isFinished();}
 
 }

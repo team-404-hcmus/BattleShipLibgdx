@@ -21,13 +21,17 @@ import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragAndDrop;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
+
+import java.util.ArrayList;
 
 public class PlanningScreen extends BaseScreen{
 
@@ -38,7 +42,7 @@ public class PlanningScreen extends BaseScreen{
     final int cellCountsRowCol = 10;
     PlanningScreen() {
         super(null);
-        cellSize = (Gdx.graphics.getHeight() - 150)/10;
+        cellSize = (Gdx.graphics.getHeight() - 150f)/10f;
     }
 
     @Override
@@ -52,15 +56,11 @@ public class PlanningScreen extends BaseScreen{
 
         batch = new SpriteBatch();
         stage = new Stage();
-        final Ship k = new Ship(gamePlayData.asset.get("ship5_h.png",Texture.class),gamePlayData.asset.get("ship5_v.png",Texture.class),cellSize,5);
-        final Ship k2 = new Ship(gamePlayData.asset.get("ship5_h.png",Texture.class),gamePlayData.asset.get("ship5_v.png",Texture.class),cellSize,2);
-        final Ship k3 = new Ship(gamePlayData.asset.get("ship5_h.png",Texture.class),gamePlayData.asset.get("ship5_v.png",Texture.class),cellSize,3);
 
-
-        final Grid  grid = new Grid(cellSize, gamePlayData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),cellCountsRowCol,cellCountsRowCol,InputListener.class );
-
+        //Init grid
+        final Grid grid = new Grid(cellSize, gamePlayData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),cellCountsRowCol,cellCountsRowCol,InputListener.class );
         grid.initListener();
-        grid.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+        grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
         DragAndDrop.Target t = new DragAndDrop.Target(grid) {
             @Override
             public boolean drag(DragAndDrop.Source source, DragAndDrop.Payload payload, float x, float y, int pointer) {
@@ -88,54 +88,67 @@ public class PlanningScreen extends BaseScreen{
 
             }
         };
-        k.AddTarget(t);
-        k2.AddTarget(t);
-        Table main = new Table();
-        main.setFillParent(true);
-        main.add(k);
-        main.row();
-        main.add(k2);
-        main.row();
-        main.add(k3);
-        main.left();
-        main.setDebug(true);
-        k.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                k.newOrigin();
-                k.toggleOrientation();
-                grid.gridSnap(k,k.getX(),k.getY());
-                if(!((Grid)k.getTarget().getActor()).isSnappable(k)){
-                    k.toggleOrientation();
-                    k.returnToOrigin();
+        //===============================================================
+
+        //Init table
+        Table ship_table = new Table();
+        ship_table.setFillParent(true);
+
+        //===============
+
+        for(int i = 1; i <= 5;++i)
+        {
+            final Ship ship = new Ship(gamePlayData.asset.get("ship5_h.png",Texture.class),gamePlayData.asset.get("ship5_v.png",Texture.class),cellSize,i);
+            ship.AddTarget(t);
+            ship.addListener(new ClickListener(){
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    ship.newOrigin();
+                    ship.toggleOrientation();
+                    grid.gridSnap(ship,ship.getX(),ship.getY());
+                    if(!((Grid)ship.getTarget().getActor()).isSnappable(ship)){
+                        ship.toggleOrientation();
+                        ship.returnToOrigin();
+                    }
+                    ship.newOrigin();
                 }
-                k.newOrigin();
-            }
-        });
-        k2.addListener(new ClickListener(){
+            });
+
+            ship_table.add(ship);
+            ship_table.row();
+        }
+        ship_table.left();
+
+
+        TextButton btn = new TextButton("Finish",asset.getSkin());
+        Table button_table = new Table();
+
+
+        button_table.add(btn).prefWidth(500f);
+        button_table.right().top().pad(70f);
+
+        Stack stack = new Stack();
+        stack.add(ship_table);
+        stack.add(button_table);
+        stack.add(grid);
+        stack.setFillParent(true);
+
+
+        btn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                k2.newOrigin();
-                k2.toggleOrientation();
-                grid.gridSnap(k2,k2.getX(),k2.getY());
-                if(!((Grid)k2.getTarget().getActor()).isSnappable(k2)){
-                    k2.toggleOrientation();
-                    k2.returnToOrigin();
-                }
-                k2.newOrigin();
-            }
-        });
-        k3.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
+                if(grid.getShipsList().size() != 5) return;
                 PlanningScreenRedirectPayload payload = new PlanningScreenRedirectPayload();
                 payload.grid = grid;
-                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen<ActionScene>(new ActionScene(payload)));
+                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen<>(new ActionScene(payload)));
             }
         });
-        grid.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
+
+
+
+        grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
         stage.addActor(grid);
-        stage.addActor(main);
+        stage.addActor(stack);
         Gdx.input.setInputProcessor(stage);
     }
 

@@ -50,7 +50,7 @@ public class HomeScreen extends BaseScreen {
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen(new PlanningScreen()));
+                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen<>(new PlanningScreen()));
                 super.touchUp(event, x, y, pointer, button);
             }
         });

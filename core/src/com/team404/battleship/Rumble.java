@@ -1,6 +1,8 @@
 package com.team404.battleship;
 
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveByAction;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
@@ -23,10 +25,12 @@ public class Rumble extends SequenceAction {
         shake1 = new MoveByAction();
         shake2 = new MoveByAction();
         moveBack = new MoveToAction();
+        addAction(Actions.touchable(Touchable.disabled));
         addAction(shake);
         addAction(shake1);
         addAction(shake2);
         addAction(moveBack);
+        addAction(Actions.touchable(Touchable.enabled));
     }
 
     @Override

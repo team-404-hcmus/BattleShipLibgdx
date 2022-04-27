@@ -60,14 +60,7 @@ public class Grid extends Table {
         Vector2 pos = localToStageCoordinates(relativePos);
         ship.setPosition(pos.x,pos.y);
     }
-    void gridSnap(Ship ship,float x,float y,boolean addShip)
-    {
-        gridSnap(ship,x,y);
-        if(addShip)
-        {
-            this.addShip(ship);
-        }
-    }
+
 
     public boolean isSnappable(Ship ship){
         Rectangle bound = ship.getBounds();

@@ -18,8 +18,8 @@ public class battleship extends Game {
 
 	@Override
 	public void create() {
-//		appAsset = AppAsset.getInstance();
-		setScreen(new LoadingScreen(new HomeScreen()));
+		appAsset = AppAsset.getInstance();
+		setScreen(new HomeScreen());
 	}
 
 	@Override
@@ -32,12 +32,4 @@ public class battleship extends Game {
 	public void render() {
 		super.render();
 	}
-//	private Screen currentScreen;
-//	@Override
-//	public void setScreen(Screen screen) {
-//		if(screen == currentScreen) return;
-//		currentScreen = screen;
-//		super.setScreen(screen);
-//
-//	}
 }
