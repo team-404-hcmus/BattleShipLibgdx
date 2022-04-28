@@ -49,16 +49,17 @@ public class Grid extends Table {
 
         final float cellWidth = ship.getWidth()/cellSize;
         final float cellHeight = ship.getHeight()/cellSize;
-        relativePos.x += cellSize*(rows/2);
-        relativePos.y += cellSize*(cols/2);
+        relativePos.x += cellSize*(rows/2f);
+        relativePos.y += cellSize*(cols/2f);
         relativePos.x /=cellSize;
         relativePos.y /=cellSize;
-
+        ship.setBoardIndex((int)relativePos.x,(int)relativePos.y);
         relativePos.x = Math.max(Math.min(Math.round(relativePos.x),10f-cellWidth),0f)  - rows/2 ;
         relativePos.y = Math.max(Math.min(Math.round(relativePos.y),10f-cellHeight),0f)  - cols/2;
         relativePos.scl(cellSize);
         Vector2 pos = localToStageCoordinates(relativePos);
         ship.setPosition(pos.x,pos.y);
+
     }
 
 

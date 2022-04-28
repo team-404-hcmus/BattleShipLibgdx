@@ -8,6 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.DelayAction;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -22,20 +26,26 @@ public class ActionScene extends BaseScreen{
     private ActionSceneData sceneData;
     private Stage stage;
     private Grid grid;
+    private Grid grid2;
     private ArrayList<ShipData> shipList;
     private ArrayList<Ship> ships;
     private SpriteBatch batch;
+    final BaseGame game;
     public class ShipData{
         boolean Orientation;
         float x;
         float y;
+        int logicX;
+        int logicY;
         int size;
-        ShipData(float x, float y, int size, boolean ort)
+        ShipData(float x, float y,int lx,int ly, int size, boolean ort)
         {
             this.x = x;
             this.y = y;
             this.size = size;
             this.Orientation = ort;
+            this.logicX= lx;
+            this.logicY=ly;
         }
     }
     public ActionScene(PlanningScreen.PlanningScreenRedirectPayload payload){
@@ -44,9 +54,13 @@ public class ActionScene extends BaseScreen{
         ArrayList<Ship> ships = payload.grid.getShipsList();
         for(Ship s : ships)
         {
-            shipList.add(new ShipData(s.getX(),s.getY(),s.getSize(),s.getOrientation()));
+            shipList.add(new ShipData(s.getX(),s.getY(),s.getBoardIndexX(),s.getBoardIndexY(),s.getSize(),s.getOrientation()));
+
         }
+        Player p1 = new Player(shipList);
+        Player p2 = new Player(shipList);
         cellSize = (Gdx.graphics.getHeight() - 150)/10;
+        game = new BaseGame(p1,p2);
 
     }
 
@@ -60,7 +74,19 @@ public class ActionScene extends BaseScreen{
     public void show() {
         stage = new Stage();
         batch = new SpriteBatch();
-        grid = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class ){
+        grid = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class );
+        final float animation_Duration = .3f;
+        grid.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                MoveToAction action = Actions.moveTo(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
+                action.setDuration(animation_Duration);
+                grid2.addAction(action);
+
+            }
+        });
+
+        grid2 = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class ){
             @Override
             public void initListener() {
                 layout();
@@ -69,18 +95,37 @@ public class ActionScene extends BaseScreen{
                 for(int i = 0; i < cells.size;i++)
                 {
                     final Actor act = cells.get(i);
+                    final int _x = i%10;
+                    final int _y = i/10;
                     act.addListener(new ClickListener(){
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
-                            stage.addAction(action.obtain());
+
+                            RunnableAction runable = Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MoveToAction action2 = Actions.moveTo(-cellSize*5,Gdx.graphics.getHeight()/2f);
+                                    action2.setDuration(animation_Duration);
+                                    grid2.addAction(action2);
+                                }
+                            });
+                            stage.addAction(Actions.sequence(action.obtain(),Actions.delay(0.5f),runable));
+//                            if(game.shoot(_x,_y))
+//                            {
+//                                act.setVisible(false);
+//                            }
+
                         }
                     });
                 }
             }
         };
+
         grid.initListener();
         grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
+        grid2.setPosition(-grid2.getWidth(),Gdx.graphics.getHeight()/2f);
+        grid2.initListener();
         stage.addActor(grid);
         for(ShipData d : shipList)
         {
@@ -88,10 +133,11 @@ public class ActionScene extends BaseScreen{
             if(d.Orientation){
                 k.toggleOrientation();
             }
-            k.setPosition(d.x,d.y);
             stage.addActor(k);
-        }
+            k.setPosition(d.x,d.y);
 
+        }
+        stage.addActor(grid2);
         Gdx.input.setInputProcessor(stage);
     }
 

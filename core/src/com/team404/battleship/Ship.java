@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -34,8 +35,9 @@ public class Ship extends Actor {
     protected Float ogY = null;
     private DragAndDrop.Target target;
     private final DragAndDrop dnd;
+    private int m_boardX;
+    private int m_boardY;
     Rectangle bounds;
-
     public Rectangle getBounds() {
         return bounds;
     }
@@ -158,6 +160,18 @@ public class Ship extends Actor {
         }
         this.setPosition(x, y);
 
+    }
+
+    void setBoardIndex(int x, int y){
+        m_boardX =x;
+        m_boardY =y;
+
+    }
+    int getBoardIndexX(){
+        return m_boardX;
+    }
+    int getBoardIndexY(){
+        return m_boardY;
     }
 
 }
