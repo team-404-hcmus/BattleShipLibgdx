@@ -10,8 +10,9 @@ public class BaseGame {
         activePlayer = true;
     }
     boolean shoot(int x, int y){
+
         Player current = p1;
-        if(!activePlayer)
+        if(activePlayer)
         {
             current = p2;
         }
@@ -21,5 +22,10 @@ public class BaseGame {
         }
         return result;
     }
+
+    boolean end(){
+        return p1.isAllSunk() || p2.isAllSunk();
+    }
+
 
 }

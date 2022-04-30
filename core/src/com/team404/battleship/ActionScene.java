@@ -1,5 +1,7 @@
 package com.team404.battleship;
 
+import android.support.annotation.RequiresApi;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
@@ -20,6 +22,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ActionScene extends BaseScreen{
     private final int cellSize;
@@ -96,7 +99,7 @@ public class ActionScene extends BaseScreen{
                 {
                     final Actor act = cells.get(i);
                     final int _x = i%10;
-                    final int _y = i/10;
+                    final int _y = 9-i/10;
                     act.addListener(new ClickListener(){
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
@@ -111,10 +114,20 @@ public class ActionScene extends BaseScreen{
                                 }
                             });
                             stage.addAction(Actions.sequence(action.obtain(),Actions.delay(0.5f),runable));
-//                            if(game.shoot(_x,_y))
-//                            {
-//                                act.setVisible(false);
-//                            }
+                            if(game.end()) {
+                                Ship a = null;
+                                a.toggleOrientation();
+                            }
+
+                            Random random = new Random();
+                            int _x1 = random.nextInt(9);
+                            int _y1 = random.nextInt(9);
+                            game.shoot(_x1,_y1);
+                            if(game.shoot(_x,_y))
+                            {
+                                act.setVisible(false);
+
+                            }
 
                         }
                     });

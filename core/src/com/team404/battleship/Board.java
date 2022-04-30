@@ -72,9 +72,13 @@ public class Board {
             for(int y =0; y < m_size;y++)
             {
                 Cell cell =  m_board[x][y];
-                if(cell.m_hasShip && !cell.m_isHit)
+                if(cell.m_hasShip )
                 {
-                    return false;
+                    if(!cell.m_isHit)
+                    {
+                        return false;
+                    }
+
                 }
             }
         }
