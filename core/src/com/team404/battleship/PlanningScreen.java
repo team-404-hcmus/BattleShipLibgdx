@@ -58,7 +58,7 @@ public class PlanningScreen extends BaseScreen{
         stage = new Stage();
 
         //Init grid
-        final Grid grid = new Grid(cellSize, gamePlayData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),cellCountsRowCol,cellCountsRowCol,InputListener.class );
+        final Grid grid = new Grid(cellSize, gamePlayData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),cellCountsRowCol,cellCountsRowCol);
         grid.initListener();
         grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
         DragAndDrop.Target t = new DragAndDrop.Target(grid) {
@@ -130,14 +130,13 @@ public class PlanningScreen extends BaseScreen{
         Stack stack = new Stack();
         stack.add(ship_table);
         stack.add(button_table);
-        stack.add(grid);
         stack.setFillParent(true);
 
 
         btn.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(grid.getShipsList().size() != 5) return;
+//                if(grid.getShipsList().size() != 5) return;
                 PlanningScreenRedirectPayload payload = new PlanningScreenRedirectPayload();
                 payload.grid = grid;
                 ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen<>(new ActionScene(payload)));

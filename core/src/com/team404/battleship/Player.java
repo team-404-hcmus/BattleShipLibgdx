@@ -27,6 +27,10 @@ public class Player implements Serializable {
             }
         }
     }
+    Player(Board board)
+    {
+        playerBoard = board;
+    }
     //add, create board, ship
     public void setBoard(Board newBoard){
         this.playerBoard=newBoard;

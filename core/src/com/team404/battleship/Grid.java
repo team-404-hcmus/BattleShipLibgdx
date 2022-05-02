@@ -17,7 +17,7 @@ public class Grid extends Table {
     protected final int rows;
     protected final int cols;
     protected ArrayList<Ship> m_Ships;
-    public Grid(float CellSize, Skin skin, int rowCount, int colCount, Class<? extends InputListener> T){
+    public Grid(float CellSize, Skin skin, int rowCount, int colCount){
         m_Ships = new ArrayList<>();
         this.cellSize = CellSize;
         this.rows = rowCount;
@@ -31,6 +31,7 @@ public class Grid extends Table {
             }
             row();
         }
+        initListener();
     }
 
     public void initListener(){
@@ -53,9 +54,13 @@ public class Grid extends Table {
         relativePos.y += cellSize*(cols/2f);
         relativePos.x /=cellSize;
         relativePos.y /=cellSize;
+
+        relativePos.x = Math.max(Math.min(Math.round(relativePos.x),10f-cellWidth),0f);
+        relativePos.y = Math.max(Math.min(Math.round(relativePos.y),10f-cellHeight),0f);
         ship.setBoardIndex((int)relativePos.x,(int)relativePos.y);
-        relativePos.x = Math.max(Math.min(Math.round(relativePos.x),10f-cellWidth),0f)  - rows/2 ;
-        relativePos.y = Math.max(Math.min(Math.round(relativePos.y),10f-cellHeight),0f)  - cols/2;
+        Vector2 unit = new Vector2(1,1);
+        unit.scl(rows/2);
+        relativePos.sub(unit);
         relativePos.scl(cellSize);
         Vector2 pos = localToStageCoordinates(relativePos);
         ship.setPosition(pos.x,pos.y);

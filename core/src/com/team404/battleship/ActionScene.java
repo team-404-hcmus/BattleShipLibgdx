@@ -6,17 +6,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.DelayAction;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
@@ -33,6 +38,11 @@ public class ActionScene extends BaseScreen{
     private ArrayList<ShipData> shipList;
     private ArrayList<Ship> ships;
     private SpriteBatch batch;
+
+
+    private Stack selfTableStack;
+    private Stack OpponentTableStack;
+    private Stack UIWidgetStack;
     final BaseGame game;
     public class ShipData{
         boolean Orientation;
@@ -77,83 +87,206 @@ public class ActionScene extends BaseScreen{
     public void show() {
         stage = new Stage();
         batch = new SpriteBatch();
-        grid = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class );
+
         final float animation_Duration = .3f;
-        grid.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                MoveToAction action = Actions.moveTo(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
-                action.setDuration(animation_Duration);
-                grid2.addAction(action);
 
-            }
-        });
 
-        grid2 = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class ){
-            @Override
-            public void initListener() {
-                layout();
-                SnapshotArray<Actor> cells = getChildren();
 
-                for(int i = 0; i < cells.size;i++)
-                {
-                    final Actor act = cells.get(i);
-                    final int _x = i%10;
-                    final int _y = 9-i/10;
-                    act.addListener(new ClickListener(){
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
+//        grid.addListener(new ClickListener(){
+//            @Override
+//            public void clicked(InputEvent event, float x, float y) {
+//                MoveToAction action = Actions.moveTo(Gdx.graphics.getWidth()/2f,0);
+//                action.setDuration(animation_Duration);
+//                st.addAction(action);
+//
+//            }
+//        });
+//
+//
+//
+//        grid2 = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class ){
+//            @Override
+//            public void initListener() {
+//                super.initListener();
+//                SnapshotArray<Actor> cells = getChildren();
+//                for(int i = 0; i < cells.size;i++)
+//                {
+//                    final Actor act = cells.get(i);
+//                    final int _x = i%10;
+//                    final int _y = 9-i/10;
+//                    act.addListener(new ClickListener(){
+//                        @Override
+//                        public void clicked(InputEvent event, final float x, final float y) {
+//                            Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
+//
+//                            RunnableAction runable = Actions.run(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    MoveToAction action2 = Actions.moveTo(-cellSize*5,0);
+//                                    action2.setDuration(animation_Duration);
+//                                    st.addAction(action2);
+//                                    if(game.end()) {
+//                                        throw new NullPointerException();
+//                                    }
+//                                    Ship k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,1,false);
+//                                    Table tbl = new Table();
+//                                    tbl.add(k);
+//
+//                                    st.addActor(tbl);
+//                                    //k.setPosition(act.getX(),act.getY());
+//                                    grid2.gridSnap(k,x,y);
+//                                }
+//                            });
+//                            stage.addAction(Actions.sequence(action.obtain(),Actions.delay(0.5f),runable,Actions.delay(1.0f)));
+//                        }
+//                    });
+//                }
+//            }
+//        };
+//
+//        grid.initListener();
+//        grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
+//
+//
+//
+//        st.add(grid2);
+//        st.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
+//        grid2.initListener();
+//
+//
+//
+//
+//        stage.addActor(st);
+//        stage.addActor(grid);
 
-                            RunnableAction runable = Actions.run(new Runnable() {
-                                @Override
-                                public void run() {
-                                    MoveToAction action2 = Actions.moveTo(-cellSize*5,Gdx.graphics.getHeight()/2f);
-                                    action2.setDuration(animation_Duration);
-                                    grid2.addAction(action2);
-                                }
-                            });
-                            stage.addAction(Actions.sequence(action.obtain(),Actions.delay(0.5f),runable));
-                            if(game.end()) {
-                                Ship a = null;
-                                a.toggleOrientation();
-                            }
 
-                            Random random = new Random();
-                            int _x1 = random.nextInt(9);
-                            int _y1 = random.nextInt(9);
-                            game.shoot(_x1,_y1);
-                            if(game.shoot(_x,_y))
-                            {
-                                act.setVisible(false);
-
-                            }
-
-                        }
-                    });
-                }
-            }
-        };
-
-        grid.initListener();
-        grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
-        grid2.setPosition(-grid2.getWidth(),Gdx.graphics.getHeight()/2f);
-        grid2.initListener();
-        stage.addActor(grid);
-        for(ShipData d : shipList)
-        {
-            Ship k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,d.size,false);
-            if(d.Orientation){
-                k.toggleOrientation();
-            }
-            stage.addActor(k);
-            k.setPosition(d.x,d.y);
-
-        }
-        stage.addActor(grid2);
+        InitSelfTable();
+        InitOpponentTable();
         Gdx.input.setInputProcessor(stage);
     }
 
+    public void InitSelfTable(){
+        if(stage == null) return;
+
+        selfTableStack = new Stack();
+        stage.addActor(selfTableStack);
+        grid = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10);
+        selfTableStack.add(grid);
+        selfTableStack.setFillParent(true);
+        selfTableStack.setLayoutEnabled(false);
+        grid.setLayoutEnabled(true);
+        grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
+        for(ShipData d : shipList)
+        {
+            Ship k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,d.size,false);
+
+            if(d.Orientation){
+                k.toggleOrientation();
+            }
+            k.setPosition(d.x,d.y);
+            selfTableStack.add(k);
+        }
+        game.AddListener(new GameEvent() {
+            @Override
+            public void GetShoot(int x, int y) {
+                final int _x = x;
+                final int _y = y;
+                stage.addAction(Actions.sequence(
+                        Actions.delay(1f),
+                        Actions.run(new Runnable() {
+                            @Override
+                            public void run() {
+                                Ship k = new Ship(sceneData.asset.get("ship5_h.png", Texture.class), sceneData.asset.get("ship5_v.png", Texture.class), cellSize, 1, false);
+                                Vector2 pos = new Vector2();
+                                Actor act = grid.getChild((9 - _y) * 10 + _x);
+                                act.localToStageCoordinates(pos);
+                                k.setPosition(pos.x, pos.y);
+                                selfTableStack.addActor(k);
+                                if (!game.end()) {
+                                    stage.addAction(Actions.sequence(Actions.delay(3f),
+                                            Actions.run(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    OpponentTableStack.addAction(Actions.moveTo(0, 0, 0.5f));
+                                                }
+                                            })));
+                                } else {
+                                    stage.addAction(Actions.sequence(Actions.delay(3f),
+                                            Actions.run(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    throw new NullPointerException();
+                                                }
+                                            })));
+
+                                }
+                            }
+                        })
+                ));
+            }
+        });
+    }
+
+    public void InitOpponentTable(){
+        if(stage == null) return;
+
+        OpponentTableStack = new Stack();
+        stage.addActor(OpponentTableStack);
+        grid2 = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10){
+            @Override
+            public void initListener() {
+                super.initListener();
+                SnapshotArray<Actor> acts = getChildren();
+                for(int x = 0; x <10; x++)
+                {
+                    for(int y = 0; y < 10;y++)
+                    {
+                        final int _x = x;
+                        final int _y = y;
+                        final Actor act = acts.get(10*y+x);
+
+                        act.addListener(new ClickListener(){
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                if(!game.shoot(_x,9-_y)) return;
+                                if(game.end()) {
+                                    throw new NullPointerException();
+//                                    return;
+                                }
+                                Ship k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,1,false);
+                                Vector2 pos = new Vector2();
+                                act.localToStageCoordinates(pos);
+                                k.setPosition(pos.x,pos.y);
+                                OpponentTableStack.addActor(k);
+
+
+                                Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
+                                stage.addAction(Actions.sequence(
+                                        action.obtain(),
+                                        Actions.delay(0.5f),
+                                        Actions.run(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                OpponentTableStack.addAction(Actions.moveTo(-Gdx.graphics.getWidth(),0,0.5f));
+                                                grid.setTouchable(Touchable.disabled);
+                                                game.next();
+                                            }
+                                        })
+                                ));
+
+                            }
+                        });
+                    }
+                }
+            }
+        };
+        OpponentTableStack.add(grid2);
+        OpponentTableStack.setFillParent(true);
+        OpponentTableStack.setLayoutEnabled(false);
+        grid2.setLayoutEnabled(true);
+        grid2.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
+        OpponentTableStack.setPosition(0,0);
+    }
     @Override
     public void render(float delta) {
 

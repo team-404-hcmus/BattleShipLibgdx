@@ -1,9 +1,5 @@
 package com.team404.battleship;
 
-import com.badlogic.gdx.math.Vector2;
-
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class Board {
@@ -13,8 +9,7 @@ public class Board {
         boolean m_hasShip;
         boolean m_isHit;
     }
-    private Cell[][] m_board = null;
-    private final int placesShot=0;
+    private Cell[][] m_board;
 
     public Board(int size) {
         m_size = size;
@@ -30,13 +25,35 @@ public class Board {
             }
         }
     }
+
+    public Board(boolean[][] Board) {
+        if(Board.length != Board[0].length)
+        {
+            throw new ArrayStoreException("Height and width mis match");
+        }
+        m_size = Board.length;
+        m_board = new Cell[m_size][m_size];
+        for(int x =0; x < m_size;x ++)
+        {
+            for(int y =0; y < m_size;y++)
+            {
+                Cell cell = new Cell();
+                cell.m_hasShip = Board[x][y];
+                cell.m_isHit = false;
+                m_board[x][y] = cell;
+            }
+        }
+    }
     void placeShip(ActionScene.ShipData ship){
         int deltaX = ship.Orientation ?0:1;
         int deltaY = ship.Orientation ?1:0;
-        for(int i = 0; i < ship.size;i++)
+        int x = ship.logicX;
+        int y = ship.logicY;
+        m_board[x][y].m_hasShip = true;
+        for(int i = 0; i < ship.size-1;i++)
         {
-            int x = ship.logicX+deltaX;
-            int y = ship.logicY+deltaY;
+            x += deltaX;
+            y +=deltaY;
             m_board[x][y].m_hasShip = true;
         }
 
