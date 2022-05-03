@@ -52,7 +52,7 @@ public class Ship extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        renderTxt.draw(batch,getX(),getY(),getWidth(),getHeight());
+        renderTxt.draw(batch,getX(),getY(),getWidth()/2,getHeight()/2,getWidth(),getHeight(),1,1,getRotation());
     }
 
 

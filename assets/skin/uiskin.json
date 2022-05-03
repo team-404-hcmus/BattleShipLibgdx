@@ -7,11 +7,10 @@
 		"a": 1
 	}
 },
-"com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle": {
+"com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
 	"default": {
-		"up": "cell",
-		"down": "cell",
-		"over": "cell"
+		"font": "font",
+		"background": "label"
 	}
 },
 "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
@@ -20,6 +19,11 @@
 		"up": "buttonv2_up",
 		"down": "buttonv2_down",
 		"over": "buttonv2_up"
+	}
+},
+"com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle": {
+	"default": {
+		"label": "default"
 	}
 }
 }
