@@ -19,6 +19,7 @@ public class battleship extends Game {
 	@Override
 	public void create() {
 		appAsset = AppAsset.getInstance();
+		appAsset.bg_sfx.play();
 		setScreen(new HomeScreen());
 	}
 

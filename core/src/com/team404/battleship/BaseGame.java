@@ -14,21 +14,28 @@ public class BaseGame {
         activePlayer = true;
         m_eventsHandler = new ArrayList<>();
     }
-    boolean shoot(int x, int y){
+    class ShootResult{
+        public boolean result;
+        public boolean m_hasShip;
+    }
+    ShootResult shoot(int x, int y){
         Player current = p1;
         if(activePlayer)
         {
             current = p2;
         }
-        boolean result = current.getShot(x,y);
-        if(result){
+        ShootResult result = new ShootResult();
+        result.result = current.getShot(x,y);
+        result.m_hasShip = current.getPlayerBoard().getCell(x,y).m_hasShip;
+        if(result.result){
             activePlayer = !activePlayer;
         }
         return result;
     }
 
     boolean end(){
-        return p1.isAllSunk() || p2.isAllSunk();
+        return p1.isAllSunk() ||
+                p2.isAllSunk();
     }
 
     void RegisterPlayer(boolean[][] i_shipBoard){
@@ -43,7 +50,11 @@ public class BaseGame {
         Random rand = new Random();
         int randX = rand.nextInt(10);
         int randY = rand.nextInt(10);
-        shoot(randX,randY);
+        while(!shoot(randX,randY).result)
+        {
+            randX = rand.nextInt(10);
+            randY = rand.nextInt(10);
+        }
         for(GameEvent e : m_eventsHandler)
         {
             e.GetShoot(randX,randY);

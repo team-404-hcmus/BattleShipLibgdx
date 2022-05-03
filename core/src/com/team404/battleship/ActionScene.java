@@ -5,7 +5,10 @@ import android.support.annotation.RequiresApi;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -19,10 +22,13 @@ import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.SnapshotArray;
 
@@ -38,12 +44,21 @@ public class ActionScene extends BaseScreen{
     private ArrayList<ShipData> shipList;
     private ArrayList<Ship> ships;
     private SpriteBatch batch;
+    private Label lbl;
 
 
     private Stack selfTableStack;
     private Stack OpponentTableStack;
     private Stack UIWidgetStack;
     final BaseGame game;
+
+    Animation<TextureRegion> walkAnimation; // Must declare frame type (TextureRegion)
+    TextureRegion[] walkFrames;
+
+    ExplosionManager AnimManager;
+    float stateTime;
+
+
     public class ShipData{
         boolean Orientation;
         float x;
@@ -89,79 +104,34 @@ public class ActionScene extends BaseScreen{
         batch = new SpriteBatch();
 
         final float animation_Duration = .3f;
-
-
-
-//        grid.addListener(new ClickListener(){
-//            @Override
-//            public void clicked(InputEvent event, float x, float y) {
-//                MoveToAction action = Actions.moveTo(Gdx.graphics.getWidth()/2f,0);
-//                action.setDuration(animation_Duration);
-//                st.addAction(action);
-//
-//            }
-//        });
-//
-//
-//
-//        grid2 = new Grid(cellSize, sceneData.asset.get("skin/GamePlaySkin/gameplay_skin.json",Skin.class),10,10, InputListener.class ){
-//            @Override
-//            public void initListener() {
-//                super.initListener();
-//                SnapshotArray<Actor> cells = getChildren();
-//                for(int i = 0; i < cells.size;i++)
-//                {
-//                    final Actor act = cells.get(i);
-//                    final int _x = i%10;
-//                    final int _y = 9-i/10;
-//                    act.addListener(new ClickListener(){
-//                        @Override
-//                        public void clicked(InputEvent event, final float x, final float y) {
-//                            Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
-//
-//                            RunnableAction runable = Actions.run(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    MoveToAction action2 = Actions.moveTo(-cellSize*5,0);
-//                                    action2.setDuration(animation_Duration);
-//                                    st.addAction(action2);
-//                                    if(game.end()) {
-//                                        throw new NullPointerException();
-//                                    }
-//                                    Ship k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,1,false);
-//                                    Table tbl = new Table();
-//                                    tbl.add(k);
-//
-//                                    st.addActor(tbl);
-//                                    //k.setPosition(act.getX(),act.getY());
-//                                    grid2.gridSnap(k,x,y);
-//                                }
-//                            });
-//                            stage.addAction(Actions.sequence(action.obtain(),Actions.delay(0.5f),runable,Actions.delay(1.0f)));
-//                        }
-//                    });
-//                }
-//            }
-//        };
-//
-//        grid.initListener();
-//        grid.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
-//
-//
-//
-//        st.add(grid2);
-//        st.setPosition(Gdx.graphics.getWidth()/2f,Gdx.graphics.getHeight()/2f);
-//        grid2.initListener();
-//
-//
-//
-//
-//        stage.addActor(st);
-//        stage.addActor(grid);
-
-
         InitSelfTable();
         InitOpponentTable();
+
+        final int cols = 8;
+        final int rows = 4;
+        TextureRegion[][] tmp = TextureRegion.split(sceneData.explosionSheet,
+                sceneData.explosionSheet.getWidth() / cols,
+                sceneData.explosionSheet.getHeight() / rows);
+
+        walkFrames = new TextureRegion[rows*cols];
+        int index = 0;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                walkFrames[index++] = tmp[i][j];
+            }
+        }
+        AnimManager = new ExplosionManager(walkFrames);
+
+        Stack UIStack = new Stack();
+        Table leftSideButton = new Table();
+        lbl = new Label("Your Turn",asset.getSkin());
+        leftSideButton.add(lbl);
+        leftSideButton.right().top().pad(100f);
+//        leftSideButton.setFillParent(true);
+        UIStack.add(leftSideButton);
+        UIStack.setFillParent(true);
+
+        stage.addActor(UIStack);
         Gdx.input.setInputProcessor(stage);
     }
 
@@ -196,30 +166,14 @@ public class ActionScene extends BaseScreen{
                         Actions.run(new Runnable() {
                             @Override
                             public void run() {
-                                Ship k = new Ship(sceneData.asset.get("ship5_h.png", Texture.class), sceneData.asset.get("ship5_v.png", Texture.class), cellSize, 1, false);
+                                Ship k = new Ship(sceneData.cell_false, sceneData.cell_false, cellSize, 1, false);
                                 Vector2 pos = new Vector2();
                                 Actor act = grid.getChild((9 - _y) * 10 + _x);
                                 act.localToStageCoordinates(pos);
                                 k.setPosition(pos.x, pos.y);
                                 selfTableStack.addActor(k);
-                                if (!game.end()) {
-                                    stage.addAction(Actions.sequence(Actions.delay(3f),
-                                            Actions.run(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    OpponentTableStack.addAction(Actions.moveTo(0, 0, 0.5f));
-                                                }
-                                            })));
-                                } else {
-                                    stage.addAction(Actions.sequence(Actions.delay(3f),
-                                            Actions.run(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    throw new NullPointerException();
-                                                }
-                                            })));
 
-                                }
+                                SpawnRocket(pos.x, pos.y,false);
                             }
                         })
                 ));
@@ -248,32 +202,19 @@ public class ActionScene extends BaseScreen{
                         act.addListener(new ClickListener(){
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
-                                if(!game.shoot(_x,9-_y)) return;
                                 if(game.end()) {
-                                    throw new NullPointerException();
-//                                    return;
+                                    throw new UnknownError();
                                 }
-                                Ship k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,1,false);
-                                Vector2 pos = new Vector2();
+                                BaseGame.ShootResult result = game.shoot(_x,9-_y);
+                                if(!result.result) return;
+                                Texture tx = result.m_hasShip?sceneData.cell_true:sceneData.cell_false;
+
+                                Ship k = new Ship(tx,tx,cellSize,1,false);
+                                final Vector2 pos = new Vector2();
                                 act.localToStageCoordinates(pos);
                                 k.setPosition(pos.x,pos.y);
                                 OpponentTableStack.addActor(k);
-
-
-                                Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
-                                stage.addAction(Actions.sequence(
-                                        action.obtain(),
-                                        Actions.delay(0.5f),
-                                        Actions.run(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                OpponentTableStack.addAction(Actions.moveTo(-Gdx.graphics.getWidth(),0,0.5f));
-                                                grid.setTouchable(Touchable.disabled);
-                                                game.next();
-                                            }
-                                        })
-                                ));
-
+                                SpawnRocket(pos.x,pos.y,true);
                             }
                         });
                     }
@@ -295,7 +236,31 @@ public class ActionScene extends BaseScreen{
         batch.end();
         stage.act(delta);
         stage.draw();
+        AnimManager.render(batch,delta);
+    }
 
+    public void OpenOverLay(boolean isWin){
+        String result = isWin?"You won":"You lose";
+        TextButton txt = new TextButton("Retry",asset.getSkin());
+        Table tbl = new Table();
+        tbl.setFillParent(true);
+        txt.setText(result);
+        tbl.add(txt);
+        txt.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen<>(new HomeScreen()));
+            }
+        });
+        for(Actor i :grid.getChildren())
+        {
+            i.setTouchable(Touchable.disabled);
+        }
+        for(Actor i :grid2.getChildren())
+        {
+            i.setTouchable(Touchable.disabled);
+        }
+        stage.addActor(tbl);
     }
 
     @Override
@@ -321,22 +286,37 @@ public class ActionScene extends BaseScreen{
     @Override
     public void dispose() {
 
+
     }
 
     public class ActionSceneData implements ILoadable{
         public AssetManager asset;
         public Texture empty_bg;
+        public Texture cell_false;
+        public Texture cell_true;
+        public Texture explosionSheet;
+        public Texture Overlay;
+        public Texture rocket;
         ActionSceneData(){
             asset = new AssetManager();
             asset.load("empty_bg.jpg",Texture.class);
             asset.load("skin/GamePlaySkin/gameplay_skin.json", Skin.class);
             asset.load("ship5_v.png", Texture.class);
             asset.load("ship5_h.png", Texture.class);
+            asset.load("cell_false.png", Texture.class);
+            asset.load("cell_true.png", Texture.class);
+            asset.load("expsheet.png",Texture.class);
+            asset.load("overlay.png",Texture.class);
+            asset.load("rocket.png",Texture.class);
         }
 
         public void onFinish(){
             empty_bg = asset.get("empty_bg.jpg");
-
+            cell_false = asset.get("cell_false.png");
+            cell_true=asset.get("cell_true.png");
+            explosionSheet = asset.get("expsheet.png");
+            Overlay = asset.get("overlay.png");
+            rocket = asset.get("rocket.png");
         }
         @Override
         public boolean load() {
@@ -346,5 +326,92 @@ public class ActionScene extends BaseScreen{
             }
             return isFinish;
         }
+    }
+
+    Rocket _k;
+    boolean isWin = false;
+    public void SpawnRocket(final float Rx, final float Ry, final boolean Who){
+        Random generator = new Random();
+        int Hposition = generator.nextInt(2); //0: top; 1: right; 2: bottom; 3:right
+        int Vposition = generator.nextInt(2); //0: top; 1: right; 2: bottom; 3:right
+        int x;
+        int y;
+        if (Hposition == 0){
+            y = generator.nextInt(10) + Gdx.graphics.getHeight();
+        } else {
+            y = generator.nextInt(10)-10;
+        }
+        if (Vposition == 0){
+            x = generator.nextInt(10) + Gdx.graphics.getWidth();
+        } else {
+            x = generator.nextInt(10)-10;
+        }
+
+//        if(_k == null)
+//        {
+//            _k = new Ship(sceneData.asset.get("ship5_h.png",Texture.class),sceneData.asset.get("ship5_v.png",Texture.class),cellSize,2,false);
+//            stage.addActor(_k);
+//        }
+        if(_k == null)
+        {
+            _k = new Rocket(sceneData.rocket,34,160);
+            stage.addActor(_k);
+        }
+        _k.setPosition(x,y);
+        Vector2 start = new Vector2(_k.getX(),_k.getY());
+        Vector2 target = new Vector2(Rx,Ry);
+        target.sub(start);
+        float angel = target.angleDeg();
+        _k.setRotation(angel);
+        _k.addAction(Actions.sequence(Actions.visible(true),
+                Actions.moveTo(Rx,Ry,1f, Interpolation.exp5In),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        asset.sound.play();
+                        AnimManager.spawnAt(Rx-50,Ry-50,cellSize+100,0.05f);
+                    }
+                }),
+                Actions.visible(false),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        Pool<Rumble> action = ActionsFactory.getInstance().get(Rumble.class);
+                        stage.addAction(Actions.sequence(
+                                action.obtain(),
+                                Actions.delay(0.5f),
+                                Actions.run(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if(game.end()) {
+                                            OpenOverLay(Who);
+                                            return;
+                                        }
+                                        ToggleOpponentTable(Who);
+                                    }
+                                })
+                        ));
+                    }
+                })));
+    }
+
+    private void ToggleOpponentTable(boolean Who){
+        if(Who)
+        {
+            lbl.setText("Opponent Turn");
+            OpponentTableStack.addAction(Actions.moveTo(-Gdx.graphics.getWidth(),0,0.5f));
+            game.next();
+        }
+        else{
+            lbl.setText("Your Turn");
+            stage.addAction(Actions.sequence(Actions.delay(1.5f),
+                    Actions.run(new Runnable() {
+                        @Override
+                        public void run() {
+                            OpponentTableStack.addAction(Actions.moveTo(0, 0, 0.5f));
+                        }
+            })));
+        }
+
     }
 }

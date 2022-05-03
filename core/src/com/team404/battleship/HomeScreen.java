@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 
@@ -35,7 +36,6 @@ public class HomeScreen extends BaseScreen {
         batch = new SpriteBatch();
         asset.getSkin();
         stage = new Stage(new ScreenViewport());
-
         SinglePlayer = new TextButton("Single Player",asset.getSkin());
         SinglePlayer.addListener(new InputListener(){
             @Override
@@ -51,12 +51,20 @@ public class HomeScreen extends BaseScreen {
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen<>(new PlanningScreen()));
+
                 super.touchUp(event, x, y, pointer, button);
             }
         });
         final int padding = 20;
 
         Multiplayer = new TextButton("Multi Player",asset.getSkin());
+
+        Multiplayer.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                ((battleship)Gdx.app.getApplicationListener()).setScreen(new LoadingScreen<>(new MultiPlayerScene()));
+            }
+        });
         Settingbtn = new TextButton("Setting",asset.getSkin());
         menuTable = new Table();
 
@@ -68,13 +76,11 @@ public class HomeScreen extends BaseScreen {
         menuTable.setX(Gdx.graphics.getWidth()/2f);
         menuTable.setY(Gdx.graphics.getHeight()/3.5f);
 
-
         menuTable.debug();
 
         stage.addActor(menuTable);
         img = asset.getBackground();
         Gdx.input.setInputProcessor(stage);
-        ((battleship)Gdx.app.getApplicationListener()).m_brigde.Log("loading Screen");
     }
 
     @Override
@@ -129,4 +135,6 @@ public class HomeScreen extends BaseScreen {
 
         }
     }
+
+
 }
