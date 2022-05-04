@@ -44,6 +44,12 @@ public class Board {
             }
         }
     }
+   
+    boolean isInBound(int x,int y)
+    {
+        return (0 <= x && x < m_size) && (0 <= y && y < m_size);
+    }
+
     void placeShip(ActionScene.ShipData ship){
         int deltaX = ship.Orientation ?0:1;
         int deltaY = ship.Orientation ?1:0;
@@ -56,13 +62,7 @@ public class Board {
             y +=deltaY;
             m_board[x][y].m_hasShip = true;
         }
-
     }
-    boolean isInBound(int x,int y)
-    {
-        return (0 <= x && x < m_size) && (0 <= y && y < m_size);
-    }
-
     /**Shooting  Function **/
     boolean shoot(int i_x, int i_y){
         if(!isInBound(i_x,i_y))
