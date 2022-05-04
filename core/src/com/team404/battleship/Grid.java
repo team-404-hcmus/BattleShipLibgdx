@@ -52,8 +52,8 @@ public class Grid extends Table {
         final float cellHeight = ship.getHeight()/cellSize;
         relativePos.x += cellSize*(rows/2f);
         relativePos.y += cellSize*(cols/2f);
-        relativePos.x /=cellSize;
-        relativePos.y /=cellSize;
+        relativePos.x/=cellSize;
+        relativePos.y/=cellSize;
 
         relativePos.x = Math.max(Math.min(Math.round(relativePos.x),10f-cellWidth),0f);
         relativePos.y = Math.max(Math.min(Math.round(relativePos.y),10f-cellHeight),0f);
